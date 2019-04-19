@@ -54,7 +54,8 @@ public class HttpServerIO {
     /// Otherwise, `listenAddressIPv4` will be used.
     public var listenAddressIPv6: String?
 
-    private let queue = DispatchQueue(label: "swifter.httpserverio.clientsockets")
+    private let syncQueue = DispatchQueue(label: "swifter.httpserverio.clientsockets")
+    private var execQueue = DispatchQueue.global(qos: .background)
 
     public func port() throws -> Int {
         return Int(try socket.port())
@@ -76,20 +77,19 @@ public class HttpServerIO {
         let address = forceIPv4 ? listenAddressIPv4 : listenAddressIPv6
         self.socket = try Socket.tcpSocketForListen(port, forceIPv4, SOMAXCONN, address)
         self.state = .running
-        DispatchQueue.global(qos: priority).async { [weak self] in
+        execQueue = .global(qos: priority)
+
+        execQueue.async { [weak self] in
             guard let strongSelf = self else { return }
             guard strongSelf.operating else { return }
             while let socket = try? strongSelf.socket.acceptClientSocket() {
-                DispatchQueue.global(qos: priority).async { [weak self] in
+                strongSelf.execQueue.async { [weak self] in
                     guard let strongSelf = self else { return }
                     guard strongSelf.operating else { return }
-                    strongSelf.queue.async {
+                    strongSelf.syncQueue.async {
                         strongSelf.sockets.insert(socket)
                     }
                     strongSelf.handleConnection(socket)
-                    strongSelf.queue.async {
-                        strongSelf.sockets.remove(socket)
-                    }
                 }
             }
             strongSelf.stop()
@@ -103,7 +103,7 @@ public class HttpServerIO {
         for socket in self.sockets {
             socket.close()
         }
-        self.queue.sync {
+        self.syncQueue.sync {
             self.sockets.removeAll(keepingCapacity: true)
         }
         socket.close()
@@ -114,31 +114,74 @@ public class HttpServerIO {
         return ([:], { _ in HttpResponse.notFound })
     }
 
-    private func handleConnection(_ socket: Socket) {
-        let parser = HttpParser()
-        while self.operating, let request = try? parser.readHttpRequest(socket) {
-            let request = request
-            request.address = try? socket.peername()
-            let (params, handler) = self.dispatch(request)
-            request.params = params
-            let response = handler(request)
-            var keepConnection = parser.supportsKeepAlive(request.headers)
-            do {
-                if self.operating {
-                    keepConnection = try self.respond(socket, response: response, keepAlive: keepConnection)
-                }
-            } catch {
-                print("Failed to send response: \(error)")
-                break
-            }
-            if let session = response.socketSession() {
-                delegate?.socketConnectionReceived(socket)
-                session(socket)
-                break
-            }
-            if !keepConnection { break }
-        }
+    private func finishSocket(_ socket: Socket) {
         socket.close()
+
+        syncQueue.async {
+            self.sockets.remove(socket)
+        }
+    }
+
+    private func handleConnection(_ socket: Socket,
+                                  parser: HttpParser = .init()) {
+        guard
+            self.operating,
+            let request = try? parser.readHttpRequest(socket)
+            else { finishSocket(socket); return }
+
+        request.address = try? socket.peername()
+
+        let keepAlive = parser.supportsKeepAlive(request.headers)
+        let (params, handler) = self.dispatch(request)
+
+        request.params = params
+
+        handleRequest(request,
+                      socket: socket,
+                      parser: parser,
+                      keepAlive: keepAlive,
+                      handler: handler)
+    }
+
+    private func handleRequest(_ request: HttpRequest,
+                               socket: Socket,
+                               parser: HttpParser,
+                               keepAlive: Bool,
+                               handler: @escaping (HttpRequest) -> HttpResponse) {
+        execQueue.async {
+            let response = handler(request)
+
+            self.execQueue.async {
+                var keepAlive = keepAlive
+
+                do {
+                    if self.operating {
+                        keepAlive = try self.respond(socket,
+                                                     response: response,
+                                                     keepAlive: keepAlive)
+                    }
+                } catch {
+                    print("Failed to send response: \(error)")
+                    self.finishSocket(socket)
+                    return
+                }
+
+                if let session = response.socketSession() {
+                    self.delegate?.socketConnectionReceived(socket)
+                    session(socket)
+                    self.finishSocket(socket)
+                    return
+                }
+
+                if !keepAlive {
+                    self.finishSocket(socket)
+                    return
+                }
+
+                self.handleConnection(socket,
+                                      parser: parser)
+            }
+        }
     }
 
     private struct InnerWriteContext: HttpResponseBodyWriter {

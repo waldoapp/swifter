@@ -9,9 +9,9 @@ import Foundation
 
 public class HttpServer: HttpServerIO {
 
-    public static let VERSION = "1.4.6"
+    public static let VERSION = "1.5.0"
 
-    private let router = HttpRouter()
+    public let router = HttpRouter()
 
     public override init() {
         self.DELETE = MethodRoute(method: "DELETE", router: router)
