@@ -7,13 +7,12 @@
 
 import Foundation
 
-
 public func demoServer(_ publicDir: String) -> HttpServer {
-    
+
     print(publicDir)
-    
+
     let server = HttpServer()
-    
+
     server["/public/:path"] = shareFilesFromDirectory(publicDir)
 
     server["/files/:path"] = directoryBrowser("/")
@@ -29,9 +28,9 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
         }
     }
-    
+
     server["/magic"] = { .ok(.html("You asked for " + $0.path)) }
-    
+
     server["/test/:param1/:param2"] = { r in
         scopes {
             html {
@@ -39,27 +38,27 @@ public func demoServer(_ publicDir: String) -> HttpServer {
                     h3 { inner = "Address: \(r.address ?? "unknown")" }
                     h3 { inner = "Url: \(r.path)" }
                     h3 { inner = "Method: \(r.method)" }
-                    
+
                     h3 { inner = "Query:" }
-                    
+
                     table(r.queryParams) { param in
                         tr {
                             td { inner = param.0 }
                             td { inner = param.1 }
                         }
                     }
-                    
+
                     h3 { inner = "Headers:" }
-                    
+
                     table(r.headers) { header in
                         tr {
                             td { inner = header.0 }
                             td { inner = header.1 }
                         }
                     }
-                    
+
                     h3 { inner = "Route params:" }
-                    
+
                     table(r.params) { param in
                         tr {
                             td { inner = param.0 }
@@ -70,7 +69,7 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
         }(r)
     }
-    
+
     server.GET["/upload"] = scopes {
         html {
             body {
@@ -78,11 +77,11 @@ public func demoServer(_ publicDir: String) -> HttpServer {
                     method = "POST"
                     action = "/upload"
                     enctype = "multipart/form-data"
-                    
+
                     input { name = "my_file1"; type = "file" }
                     input { name = "my_file2"; type = "file" }
                     input { name = "my_file3"; type = "file" }
-                    
+
                     button {
                         type = "submit"
                         inner = "Upload"
@@ -91,7 +90,7 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
         }
     }
-    
+
     server.POST["/upload"] = { r in
         var response = ""
         for multipart in r.parseMultiPartFormData() {
@@ -100,7 +99,7 @@ public func demoServer(_ publicDir: String) -> HttpServer {
         }
         return HttpResponse.ok(.html(response))
     }
-    
+
     server.GET["/login"] = scopes {
         html {
             head {
@@ -109,11 +108,11 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
             body {
                 h3 { inner = "Sign In" }
-                
+
                 form {
                     method = "POST"
                     action = "/login"
-                    
+
                     fieldset {
                         input { placeholder = "E-mail"; name = "email"; type = "email"; autofocus = "" }
                         input { placeholder = "Password"; name = "password"; type = "password"; autofocus = "" }
@@ -125,7 +124,7 @@ public func demoServer(_ publicDir: String) -> HttpServer {
                             }
                         }
                     }
-                    
+
                 }
                 javascript {
                     src = "http://cdn.staticfile.org/twitter-bootstrap/3.3.0/js/bootstrap.min.js"
@@ -133,12 +132,12 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
         }
     }
-    
+
     server.POST["/login"] = { r in
         let formFields = r.parseUrlencodedForm()
         return HttpResponse.ok(.html(formFields.map({ "\($0.0) = \($0.1)" }).joined(separator: "<br>")))
     }
-    
+
     server["/demo"] = scopes {
         html {
             body {
@@ -149,15 +148,15 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
         }
     }
-    
+
     server["/raw"] = { r in
         return HttpResponse.raw(200, "OK", ["XXX-Custom-Header": "value"], { try $0.write([UInt8]("test".utf8)) })
     }
-    
+
     server["/redirect/permanently"] = { r in
         return .movedPermanently("http://www.google.com")
     }
-    
+
     server["/redirect/temporarily"] = { r in
         return .movedTemporarily("http://www.google.com")
     }
@@ -167,11 +166,11 @@ public func demoServer(_ publicDir: String) -> HttpServer {
         for k in 0..<1000 { longResponse += "(\(k)),->" }
         return .ok(.html(longResponse))
     }
-    
+
     server["/wildcard/*/test/*/:param"] = { r in
         return .ok(.html(r.path))
     }
-    
+
     server["/stream"] = { r in
         return HttpResponse.raw(200, "OK", nil, { w in
             for i in 0...100 {
@@ -179,28 +178,27 @@ public func demoServer(_ publicDir: String) -> HttpServer {
             }
         })
     }
-    
+
     server["/websocket-echo"] = websocket(text: { (session, text) in
         session.writeText(text)
     }, binary: { (session, binary) in
         session.writeBinary(binary)
-    }, pong: { (session, pong) in
+    }, pong: { (_, _) in
         // Got a pong frame
-    }, connected: { (session) in
+    }, connected: { (_) in
         // New client connected
-    }, disconnected: { (session) in
+    }, disconnected: { (_) in
         // Client disconnected
     })
-    
+
     server.notFoundHandler = { r in
         return .movedPermanently("https://github.com/404")
     }
-    
+
     server.middleware.append { r in
         print("Middleware: \(r.address ?? "unknown address") -> \(r.method) -> \(r.path)")
         return nil
     }
-    
+
     return server
 }
-    

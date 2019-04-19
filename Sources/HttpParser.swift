@@ -12,9 +12,9 @@ enum HttpParserError: Error {
 }
 
 public class HttpParser {
-    
+
     public init() { }
-    
+
     public func readHttpRequest(_ socket: Socket) throws -> HttpRequest {
         let statusLine = try socket.readLine()
         let statusLineTokens = statusLine.components(separatedBy: " ")
@@ -31,7 +31,7 @@ public class HttpParser {
         }
         return request
     }
-    
+
     private func extractQueryParams(_ url: String) -> [(String, String)] {
         #if compiler(>=5.0)
         guard let questionMarkIndex = url.firstIndex(of: "?") else {
@@ -80,10 +80,10 @@ public class HttpParser {
     private func readBody(_ socket: Socket, size: Int) throws -> [UInt8] {
         return try socket.read(length: size)
     }
-    
+
     private func readHeaders(_ socket: Socket) throws -> [String: String] {
         var headers = [String: String]()
-        while case let headerLine = try socket.readLine() , !headerLine.isEmpty {
+        while case let headerLine = try socket.readLine(), !headerLine.isEmpty {
             let headerTokens = headerLine.split(separator: ":", maxSplits: 1, omittingEmptySubsequences: true).map(String.init)
             if let name = headerTokens.first, let value = headerTokens.last {
                 headers[name.lowercased()] = value.trimmingCharacters(in: .whitespaces)
@@ -91,7 +91,7 @@ public class HttpParser {
         }
         return headers
     }
-    
+
     func supportsKeepAlive(_ headers: [String: String]) -> Bool {
         if let value = headers["connection"] {
             return "keep-alive" == value.trimmingCharacters(in: .whitespaces)

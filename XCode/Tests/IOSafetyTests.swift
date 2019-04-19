@@ -16,7 +16,7 @@ class IOSafetyTests: XCTestCase {
         super.setUp()
         server = HttpServer.pingServer()
     }
-    
+
     override func tearDown() {
         if server.operating {
             server.stop()

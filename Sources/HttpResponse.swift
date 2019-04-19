@@ -21,13 +21,13 @@ public protocol HttpResponseBodyWriter {
 }
 
 public enum HttpResponseBody {
-    
+
     case json(AnyObject)
     case html(String)
     case text(String)
     case data(Data)
     case custom(Any, (Any) throws -> String)
-    
+
     func content() -> (Int, ((HttpResponseBodyWriter) throws -> Void)?) {
         do {
             switch self {
@@ -78,7 +78,7 @@ public enum HttpResponseBody {
 }
 
 public enum HttpResponse {
-    
+
     case switchProtocols([String: String], (Socket) -> Void)
     case ok(HttpResponseBody), created, accepted
     case movedPermanently(String)
@@ -89,30 +89,30 @@ public enum HttpResponse {
 
     func statusCode() -> Int {
         switch self {
-        case .switchProtocols(_, _)   : return 101
-        case .ok(_)                   : return 200
+        case .switchProtocols   : return 101
+        case .ok                   : return 200
         case .created                 : return 201
         case .accepted                : return 202
         case .movedPermanently        : return 301
         case .movedTemporarily        : return 307
-        case .badRequest(_)           : return 400
+        case .badRequest           : return 400
         case .unauthorized            : return 401
         case .forbidden               : return 403
         case .notFound                : return 404
         case .internalServerError     : return 500
-        case .raw(let code, _ , _, _) : return code
+        case .raw(let code, _, _, _) : return code
         }
     }
-    
+
     func reasonPhrase() -> String {
         switch self {
-        case .switchProtocols(_, _)    : return "Switching Protocols"
-        case .ok(_)                    : return "OK"
+        case .switchProtocols    : return "Switching Protocols"
+        case .ok                    : return "OK"
         case .created                  : return "Created"
         case .accepted                 : return "Accepted"
         case .movedPermanently         : return "Moved Permanently"
         case .movedTemporarily         : return "Moved Temporarily"
-        case .badRequest(_)            : return "Bad Request"
+        case .badRequest            : return "Bad Request"
         case .unauthorized             : return "Unauthorized"
         case .forbidden                : return "Forbidden"
         case .notFound                 : return "Not Found"
@@ -120,9 +120,9 @@ public enum HttpResponse {
         case .raw(_, let phrase, _, _) : return phrase
         }
     }
-    
+
     func headers() -> [String: String] {
-        var headers = ["Server" : "Swifter \(HttpServer.VERSION)"]
+        var headers = ["Server": "Swifter \(HttpServer.VERSION)"]
         switch self {
         case .switchProtocols(let switchHeaders, _):
             for (key, value) in switchHeaders {
@@ -130,8 +130,9 @@ public enum HttpResponse {
             }
         case .ok(let body):
             switch body {
-            case .json(_)   : headers["Content-Type"] = "application/json"
-            case .html(_)   : headers["Content-Type"] = "text/html"
+            case .json   : headers["Content-Type"] = "application/json"
+            case .html   : headers["Content-Type"] = "text/html; charset=utf-8"
+            case .text   : headers["Content-Type"] = "text/plain; charset=utf-8"
             default:break
             }
         case .movedPermanently(let location):
@@ -148,7 +149,7 @@ public enum HttpResponse {
         }
         return headers
     }
-    
+
     func content() -> (length: Int, write: ((HttpResponseBodyWriter) throws -> Void)?) {
         switch self {
         case .ok(let body)             : return body.content()
@@ -157,8 +158,8 @@ public enum HttpResponse {
         default                        : return (-1, nil)
         }
     }
-    
-    func socketSession() -> ((Socket) -> Void)?  {
+
+    func socketSession() -> ((Socket) -> Void)? {
         switch self {
         case .switchProtocols(_, let handler) : return handler
         default: return nil
@@ -177,7 +178,6 @@ public enum HttpResponse {
     }
 */
 
-func ==(inLeft: HttpResponse, inRight: HttpResponse) -> Bool {
+func == (inLeft: HttpResponse, inRight: HttpResponse) -> Bool {
     return inLeft.statusCode() == inRight.statusCode()
 }
-

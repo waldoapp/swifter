@@ -139,5 +139,3 @@ extension String {
         return (NSString(string: self)).mimeType()
     }
 }
-
-

@@ -19,130 +19,130 @@ public func scopes(_ scope: @escaping Closure) -> ((HttpRequest) -> HttpResponse
 
 public typealias Closure = () -> Void
 
-public var idd: String? = nil
-public var dir: String? = nil
-public var rel: String? = nil
-public var rev: String? = nil
-public var alt: String? = nil
-public var forr: String? = nil
-public var src: String? = nil
-public var type: String? = nil
-public var href: String? = nil
-public var text: String? = nil
-public var abbr: String? = nil
-public var size: String? = nil
-public var face: String? = nil
-public var char: String? = nil
-public var cite: String? = nil
-public var span: String? = nil
-public var data: String? = nil
-public var axis: String? = nil
-public var Name: String? = nil
-public var name: String? = nil
-public var code: String? = nil
-public var link: String? = nil
-public var lang: String? = nil
-public var cols: String? = nil
-public var rows: String? = nil
-public var ismap: String? = nil
-public var shape: String? = nil
-public var style: String? = nil
-public var alink: String? = nil
-public var width: String? = nil
-public var rules: String? = nil
-public var align: String? = nil
-public var frame: String? = nil
-public var vlink: String? = nil
-public var deferr: String? = nil
-public var color: String? = nil
-public var media: String? = nil
-public var title: String? = nil
-public var scope: String? = nil
-public var classs: String? = nil
-public var value: String? = nil
-public var clear: String? = nil
-public var start: String? = nil
-public var label: String? = nil
-public var action: String? = nil
-public var height: String? = nil
-public var method: String? = nil
-public var acceptt: String? = nil
-public var object: String? = nil
-public var scheme: String? = nil
-public var coords: String? = nil
-public var usemap: String? = nil
-public var onblur: String? = nil
-public var nohref: String? = nil
-public var nowrap: String? = nil
-public var hspace: String? = nil
-public var border: String? = nil
-public var valign: String? = nil
-public var vspace: String? = nil
-public var onload: String? = nil
-public var target: String? = nil
-public var prompt: String? = nil
-public var onfocus: String? = nil
-public var enctype: String? = nil
-public var onclick: String? = nil
-public var onkeyup: String? = nil
-public var profile: String? = nil
-public var version: String? = nil
-public var onreset: String? = nil
-public var charset: String? = nil
-public var standby: String? = nil
-public var colspan: String? = nil
-public var charoff: String? = nil
-public var classid: String? = nil
-public var compact: String? = nil
-public var declare: String? = nil
-public var rowspan: String? = nil
-public var checked: String? = nil
-public var archive: String? = nil
-public var bgcolor: String? = nil
-public var content: String? = nil
-public var noshade: String? = nil
-public var summary: String? = nil
-public var headers: String? = nil
-public var onselect: String? = nil
-public var readonly: String? = nil
-public var tabindex: String? = nil
-public var onchange: String? = nil
-public var noresize: String? = nil
-public var disabled: String? = nil
-public var longdesc: String? = nil
-public var codebase: String? = nil
-public var language: String? = nil
-public var datetime: String? = nil
-public var selected: String? = nil
-public var hreflang: String? = nil
-public var onsubmit: String? = nil
-public var multiple: String? = nil
-public var onunload: String? = nil
-public var codetype: String? = nil
-public var scrolling: String? = nil
-public var onkeydown: String? = nil
-public var maxlength: String? = nil
-public var valuetype: String? = nil
-public var accesskey: String? = nil
-public var onmouseup: String? = nil
-public var autofocus: String? = nil
-public var onkeypress: String? = nil
-public var ondblclick: String? = nil
-public var onmouseout: String? = nil
-public var httpEquiv: String? = nil
-public var background: String? = nil
-public var onmousemove: String? = nil
-public var onmouseover: String? = nil
-public var cellpadding: String? = nil
-public var onmousedown: String? = nil
-public var frameborder: String? = nil
-public var marginwidth: String? = nil
-public var cellspacing: String? = nil
-public var placeholder: String? = nil
-public var marginheight: String? = nil
-public var acceptCharset: String? = nil
+public var idd: String?
+public var dir: String?
+public var rel: String?
+public var rev: String?
+public var alt: String?
+public var forr: String?
+public var src: String?
+public var type: String?
+public var href: String?
+public var text: String?
+public var abbr: String?
+public var size: String?
+public var face: String?
+public var char: String?
+public var cite: String?
+public var span: String?
+public var data: String?
+public var axis: String?
+public var Name: String?
+public var name: String?
+public var code: String?
+public var link: String?
+public var lang: String?
+public var cols: String?
+public var rows: String?
+public var ismap: String?
+public var shape: String?
+public var style: String?
+public var alink: String?
+public var width: String?
+public var rules: String?
+public var align: String?
+public var frame: String?
+public var vlink: String?
+public var deferr: String?
+public var color: String?
+public var media: String?
+public var title: String?
+public var scope: String?
+public var classs: String?
+public var value: String?
+public var clear: String?
+public var start: String?
+public var label: String?
+public var action: String?
+public var height: String?
+public var method: String?
+public var acceptt: String?
+public var object: String?
+public var scheme: String?
+public var coords: String?
+public var usemap: String?
+public var onblur: String?
+public var nohref: String?
+public var nowrap: String?
+public var hspace: String?
+public var border: String?
+public var valign: String?
+public var vspace: String?
+public var onload: String?
+public var target: String?
+public var prompt: String?
+public var onfocus: String?
+public var enctype: String?
+public var onclick: String?
+public var onkeyup: String?
+public var profile: String?
+public var version: String?
+public var onreset: String?
+public var charset: String?
+public var standby: String?
+public var colspan: String?
+public var charoff: String?
+public var classid: String?
+public var compact: String?
+public var declare: String?
+public var rowspan: String?
+public var checked: String?
+public var archive: String?
+public var bgcolor: String?
+public var content: String?
+public var noshade: String?
+public var summary: String?
+public var headers: String?
+public var onselect: String?
+public var readonly: String?
+public var tabindex: String?
+public var onchange: String?
+public var noresize: String?
+public var disabled: String?
+public var longdesc: String?
+public var codebase: String?
+public var language: String?
+public var datetime: String?
+public var selected: String?
+public var hreflang: String?
+public var onsubmit: String?
+public var multiple: String?
+public var onunload: String?
+public var codetype: String?
+public var scrolling: String?
+public var onkeydown: String?
+public var maxlength: String?
+public var valuetype: String?
+public var accesskey: String?
+public var onmouseup: String?
+public var autofocus: String?
+public var onkeypress: String?
+public var ondblclick: String?
+public var onmouseout: String?
+public var httpEquiv: String?
+public var background: String?
+public var onmousemove: String?
+public var onmouseover: String?
+public var cellpadding: String?
+public var onmousedown: String?
+public var frameborder: String?
+public var marginwidth: String?
+public var cellspacing: String?
+public var placeholder: String?
+public var marginheight: String?
+public var acceptCharset: String?
 
-public var inner: String? = nil
+public var inner: String?
 
 public func a(_ c: Closure) { element("a", c) }
 public func b(_ c: Closure) { element("b", c) }
@@ -332,9 +332,9 @@ public func element(_ node: String, _ attrs: [String: String?] = [:], _ c: Closu
 var ScopesBuffer = [UInt64: String]()
 
 private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ c: Closure) {
-    
+
     // Push the attributes.
-    
+
     let stackid = idd
     let stackdir = dir
     let stackrel = rel
@@ -457,9 +457,9 @@ private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ c: Clo
     let stackmarginheight = marginheight
     let stackacceptCharset = acceptCharset
     let stackinner = inner
-    
+
     // Reset the values before a nested scope evalutation.
-    
+
     idd = nil
     dir = nil
     rel = nil
@@ -582,25 +582,25 @@ private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ c: Clo
     marginheight = nil
     acceptCharset = nil
     inner = nil
-    
+
     ScopesBuffer[Process.tid] = (ScopesBuffer[Process.tid] ?? "") + "<" + node
-    
+
     // Save the current output before the nested scope evalutation.
-    
+
     var output = ScopesBuffer[Process.tid] ?? ""
-    
+
     // Clear the output buffer for the evalutation.
-    
+
     ScopesBuffer[Process.tid] = ""
-    
+
     // Evaluate the nested scope.
-    
+
     c()
-    
+
     // Render attributes set by the evalutation.
-    
+
     var mergedAttributes = [String: String?]()
-    
+
     if let idd = idd { mergedAttributes["id"] = idd }
     if let dir = dir { mergedAttributes["dir"] = dir }
     if let rel = rel { mergedAttributes["rel"] = rel }
@@ -722,28 +722,28 @@ private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ c: Clo
     if let placeholder = placeholder { mergedAttributes["placeholder"] = placeholder }
     if let marginheight = marginheight { mergedAttributes["marginheight"] = marginheight }
     if let acceptCharset = acceptCharset { mergedAttributes["accept-charset"] = acceptCharset }
-    
+
     for item in attrs.enumerated() {
         mergedAttributes.updateValue(item.element.1, forKey: item.element.0)
     }
-    
-    output = output + mergedAttributes.reduce("") { result, item in
+
+    output += mergedAttributes.reduce("") { result, item in
         if let value = item.value {
             return result + " \(item.key)=\"\(value)\""
         } else {
             return result
         }
     }
-    
+
     if let inner = inner {
         ScopesBuffer[Process.tid] = output + ">" + (inner) + "</" + node + ">"
     } else {
         let current = ScopesBuffer[Process.tid]  ?? ""
         ScopesBuffer[Process.tid] = output + ">" + current + "</" + node + ">"
     }
-    
+
     // Pop the attributes.
-    
+
     idd = stackid
     dir = stackdir
     rel = stackrel
@@ -865,6 +865,6 @@ private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ c: Clo
     cellspacing = stackcellspacing
     marginheight = stackmarginheight
     acceptCharset = stackacceptCharset
-    
+
     inner = stackinner
 }

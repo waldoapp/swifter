@@ -8,42 +8,42 @@
 import Foundation
 
 open class HttpRouter {
-    
+
     public init() {}
-    
+
     private class Node {
-        
+
         /// The children nodes that form the route
         var nodes = [String: Node]()
-        
+
         /// Define whether or not this node is the end of a route
         var isEndOfRoute: Bool = false
-        
+
         /// The closure to handle the route
-        var handler: ((HttpRequest) -> HttpResponse)? = nil
+        var handler: ((HttpRequest) -> HttpResponse)?
     }
-    
+
     private var rootNode = Node()
 
     public func routes() -> [String] {
         var routes = [String]()
         for (_, child) in rootNode.nodes {
-            routes.append(contentsOf: routesForNode(child));
+            routes.append(contentsOf: routesForNode(child))
         }
         return routes
     }
-    
+
     private func routesForNode(_ node: Node, prefix: String = "") -> [String] {
         var result = [String]()
-        if let _ = node.handler {
+        if node.handler != nil {
             result.append(prefix)
         }
         for (key, child) in node.nodes {
-            result.append(contentsOf: routesForNode(child, prefix: prefix + "/" + key));
+            result.append(contentsOf: routesForNode(child, prefix: prefix + "/" + key))
         }
         return result
     }
-    
+
     public func register(_ method: String?, path: String, handler: ((HttpRequest) -> HttpResponse)?) {
         var pathSegments = stripQuery(path).split("/")
         if let method = method {
@@ -54,29 +54,29 @@ open class HttpRouter {
         var pathSegmentsGenerator = pathSegments.makeIterator()
         inflate(&rootNode, generator: &pathSegmentsGenerator).handler = handler
     }
-    
+
     public func route(_ method: String?, path: String) -> ([String: String], (HttpRequest) -> HttpResponse)? {
         if let method = method {
             let pathSegments = (method + "/" + stripQuery(path)).split("/")
             var pathSegmentsGenerator = pathSegments.makeIterator()
-            var params = [String:String]()
+            var params = [String: String]()
             if let handler = findHandler(&rootNode, params: &params, generator: &pathSegmentsGenerator) {
                 return (params, handler)
             }
         }
         let pathSegments = ("*/" + stripQuery(path)).split("/")
         var pathSegmentsGenerator = pathSegments.makeIterator()
-        var params = [String:String]()
+        var params = [String: String]()
         if let handler = findHandler(&rootNode, params: &params, generator: &pathSegmentsGenerator) {
             return (params, handler)
         }
         return nil
     }
-    
+
     private func inflate(_ node: inout Node, generator: inout IndexingIterator<[String]>) -> Node {
-        
+
         var currentNode = node
-        
+
         while let pathSegment = generator.next() {
             if let nextNode = currentNode.nodes[pathSegment] {
                 currentNode = nextNode
@@ -85,21 +85,21 @@ open class HttpRouter {
                 currentNode = currentNode.nodes[pathSegment]!
             }
         }
-        
+
         currentNode.isEndOfRoute = true
         return currentNode
     }
-    
+
     private func findHandler(_ node: inout Node, params: inout [String: String], generator: inout IndexingIterator<[String]>) -> ((HttpRequest) -> HttpResponse)? {
-        
+
         var matchedRoutes = [Node]()
         let pattern = generator.map { $0 }
         let numberOfElements = pattern.count
-        
-        findHandler(&node, params: &params, pattern: pattern , matchedNodes: &matchedRoutes, index: 0, count: numberOfElements)
+
+        findHandler(&node, params: &params, pattern: pattern, matchedNodes: &matchedRoutes, index: 0, count: numberOfElements)
         return matchedRoutes.first?.handler
     }
-    
+
     /// Find the handlers for a specified route
     ///
     /// - Parameters:
@@ -110,9 +110,9 @@ open class HttpRouter {
     ///   - index: The index of current position in the generator
     ///   - count: The number of elements if the route to match
     private func findHandler(_ node: inout Node, params: inout [String: String], pattern: [String], matchedNodes: inout [Node], index: Int, count: Int) {
-    
+
         if index < count, let pathToken = pattern[index].removingPercentEncoding {
-            
+
             var currentIndex = index + 1
             let variableNodes = node.nodes.filter { $0.0.first == ":" }
             if let variableNode = variableNodes.first {
@@ -125,22 +125,22 @@ open class HttpRouter {
                     } else {
                         params[variableNode.0] = pathToken
                     }
-                    
+
                     matchedNodes.append(variableNode.value)
                     return
                 }
                 params[variableNode.0] = pathToken
                 findHandler(&node.nodes[variableNode.0]!, params: &params, pattern: pattern, matchedNodes: &matchedNodes, index: currentIndex, count: count)
             }
-            
+
             if var node = node.nodes[pathToken] {
                 findHandler(&node, params: &params, pattern: pattern, matchedNodes: &matchedNodes, index: currentIndex, count: count)
             }
-            
+
             if var node = node.nodes["*"] {
                 findHandler(&node, params: &params, pattern: pattern, matchedNodes: &matchedNodes, index: currentIndex, count: count)
             }
-            
+
             if let startStarNode = node.nodes["**"] {
                 let startStarNodeKeys = startStarNode.nodes.keys
                 currentIndex += 1
@@ -152,14 +152,14 @@ open class HttpRouter {
                 }
             }
         }
-        
+
         if node.isEndOfRoute && index == count {
             // if it's the last element and the path to match is done then it's a pattern matching
             matchedNodes.append(node)
             return
         }
     }
-    
+
     private func stripQuery(_ path: String) -> String {
         if let path = path.components(separatedBy: "?").first {
             return path
@@ -169,9 +169,9 @@ open class HttpRouter {
 }
 
 extension String {
-    
+
     func split(_ separator: Character) -> [String] {
         return self.split { $0 == separator }.map(String.init)
     }
-    
+
 }

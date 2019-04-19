@@ -5,13 +5,13 @@ extension MimeTypeTests {
         ("testCaseInsensitivity", testCaseInsensitivity),
         ("testCorrectTypes", testCorrectTypes),
         ("testDefaultValue", testDefaultValue),
-        ("testTypeExtension", testTypeExtension),
+        ("testTypeExtension", testTypeExtension)
     ]
 }
 
 extension SwifterTestsHttpParser {
     static let __allTests = [
-        ("testParser", testParser),
+        ("testParser", testParser)
     ]
 }
 
@@ -27,7 +27,7 @@ extension SwifterTestsHttpRouter {
         ("testHttpRouterSimplePathSegments", testHttpRouterSimplePathSegments),
         ("testHttpRouterSinglePathSegmentWildcard", testHttpRouterSinglePathSegmentWildcard),
         ("testHttpRouterSlashRoot", testHttpRouterSlashRoot),
-        ("testHttpRouterVariables", testHttpRouterVariables),
+        ("testHttpRouterVariables", testHttpRouterVariables)
     ]
 }
 
@@ -38,13 +38,13 @@ extension SwifterTestsStringExtensions {
         ("testMiscReplace", testMiscReplace),
         ("testMiscTrim", testMiscTrim),
         ("testMiscUnquote", testMiscUnquote),
-        ("testSHA1", testSHA1),
+        ("testSHA1", testSHA1)
     ]
 }
 
 extension SwifterTestsWebSocketSession {
     static let __allTests = [
-        ("testParser", testParser),
+        ("testParser", testParser)
     ]
 }
 
@@ -55,7 +55,7 @@ public func __allTests() -> [XCTestCaseEntry] {
         testCase(SwifterTestsHttpParser.__allTests),
         testCase(SwifterTestsHttpRouter.__allTests),
         testCase(SwifterTestsStringExtensions.__allTests),
-        testCase(SwifterTestsWebSocketSession.__allTests),
+        testCase(SwifterTestsWebSocketSession.__allTests)
     ]
 }
 #endif

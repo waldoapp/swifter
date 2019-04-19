@@ -20,7 +20,7 @@ extension HttpServer {
     }
 }
 
-let defaultLocalhost = URL(string:"http://localhost:8080")!
+let defaultLocalhost = URL(string: "http://localhost:8080")!
 
 // Client
 extension URLSession {
@@ -30,7 +30,7 @@ extension URLSession {
     ) -> URLSessionDataTask {
         return self.dataTask(with: hostURL.appendingPathComponent("/ping"), completionHandler: handler)
     }
-    
+
     func retryPing(
         hostURL: URL = defaultLocalhost,
         timeout: Double = 2.0
@@ -44,24 +44,24 @@ extension URLSession {
                 timedOut = true
                 break
             }
-            
+
             #if swift(>=4.2)
             let mode = RunLoop.Mode.common
             #else
             let mode = RunLoopMode.commonModes
             #endif
-            
+
             _ = RunLoop.current.run(
                 mode: mode,
                 before: NSDate.distantFuture
             )
         }
-        
+
         return timedOut
     }
-    
+
     func signalIfPongReceived(_ semaphore: DispatchSemaphore, hostURL: URL) {
-        pingTask(hostURL: hostURL) { data, response, error in
+        pingTask(hostURL: hostURL) { _, response, _ in
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 semaphore.signal()
             } else {

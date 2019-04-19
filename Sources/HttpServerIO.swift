@@ -14,7 +14,7 @@ public protocol HttpServerIODelegate: class {
 
 public class HttpServerIO {
 
-    public weak var delegate : HttpServerIODelegate?
+    public weak var delegate: HttpServerIODelegate?
 
     private var socket = Socket(socketFileDescriptor: -1)
     private var sockets = Set<Socket>()
@@ -42,7 +42,7 @@ public class HttpServerIO {
         }
     }
 
-    public var operating: Bool { get { return self.state == .running } }
+    public var operating: Bool { return self.state == .running }
 
     /// String representation of the IPv4 address to receive requests from.
     /// It's only used when the server is started with `forceIPv4` option set to true.
@@ -171,7 +171,7 @@ public class HttpServerIO {
 
         // Some web-socket clients (like Jetfire) expects to have header section in a single packet.
         // We can't promise that but make sure we invoke "write" only once for response header section.
-        
+
         var responseHeader = String()
 
         responseHeader.append("HTTP/1.1 \(response.statusCode()) \(response.reasonPhrase())\r\n")
@@ -199,6 +199,6 @@ public class HttpServerIO {
             try writeClosure(context)
         }
 
-        return keepAlive && content.length != -1;
+        return keepAlive && content.length != -1
     }
 }
