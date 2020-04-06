@@ -19,10 +19,13 @@ import Foundation
             }
             var writeCounter = 0
             while writeCounter < readResult {
+                // &buffer + writeCounter
+                var slice = buffer[writeCounter..<readResult]
+
                 #if os(Linux)
-                    let writeResult = send(target, &buffer + writeCounter, readResult - writeCounter, Int32(MSG_NOSIGNAL))
+                    let writeResult = send(target, &slice, readResult - writeCounter, Int32(MSG_NOSIGNAL))
                 #else
-                    let writeResult = write(target, &buffer + writeCounter, readResult - writeCounter)
+                    let writeResult = write(target, &slice, readResult - writeCounter)
                 #endif
                 guard writeResult > 0 else {
                     return Int32(writeResult)
